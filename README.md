@@ -30,15 +30,11 @@ Built using Next.js and modern web technologies, QuickRead helps users stay info
 - AQI API
 
 **Deployment:**
-- Vercel / Render
+- Vercel 
 
----
 
-## 📸 Screenshots
 
-(Add screenshots here after deployment)
 
----
 
 ## 🔧 Installation
 

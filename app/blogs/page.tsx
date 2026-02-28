@@ -21,7 +21,19 @@ type BlogListItem = {
 
 async function getBlogs(): Promise<BlogListItem[]> {
   await connectToDatabase();
-  const posts = await Blog.find({}).sort({ publishDate: -1 }).limit(60).lean();
+  const posts = (await Blog.find({})
+    .sort({ publishDate: -1 })
+    .limit(60)
+    .lean()) as unknown as Array<{
+    _id: { toString(): string };
+    title: string;
+    category: string;
+    content: string;
+    slug: string;
+    authorName: string;
+    imageUrl?: string;
+    publishDate: Date | string;
+  }>;
 
   return posts.map((post) => ({
     id: post._id.toString(),

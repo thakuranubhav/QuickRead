@@ -5,13 +5,21 @@ import SiteNavbar from "@/app/components/site-navbar";
 
 export const revalidate = 0;
 
+type RecentBlog = {
+  _id: { toString(): string };
+  title: string;
+  slug: string;
+  category: string;
+  publishDate: Date | string;
+};
+
 export default async function AdminPage() {
   await connectToDatabase();
   const totalBlogs = await Blog.countDocuments();
   const recentBlogs = await Blog.find({})
     .sort({ publishDate: -1 })
     .limit(5)
-    .lean();
+    .lean() as unknown as RecentBlog[];
 
   return (
     <div className="min-h-screen bg-blue-50 flex flex-col">
