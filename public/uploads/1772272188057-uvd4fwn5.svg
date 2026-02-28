@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1920" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0B3A75"/>
+      <stop offset="0.55" stop-color="#0E7490"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F8FAFC" stop-opacity="0.26"/>
+      <stop offset="1" stop-color="#E2E8F0" stop-opacity="0.06"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1460 270) rotate(90) scale(290 430)">
+      <stop offset="0" stop-color="#38BDF8" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#glow)"/>
+
+  <!-- World map hint -->
+  <g opacity="0.18" fill="#BAE6FD">
+    <ellipse cx="1250" cy="210" rx="200" ry="85"/>
+    <ellipse cx="1470" cy="230" rx="150" ry="70"/>
+    <ellipse cx="1020" cy="230" rx="130" ry="60"/>
+    <ellipse cx="1660" cy="210" rx="120" ry="56"/>
+  </g>
+
+  <!-- Newspaper cards -->
+  <g transform="translate(180 190)">
+    <rect x="0" y="0" width="520" height="350" rx="18" fill="url(#panel)" stroke="#E2E8F0" stroke-opacity="0.25"/>
+    <rect x="30" y="36" width="220" height="18" rx="9" fill="#E2E8F0" fill-opacity="0.5"/>
+    <rect x="30" y="72" width="450" height="12" rx="6" fill="#E2E8F0" fill-opacity="0.35"/>
+    <rect x="30" y="96" width="440" height="12" rx="6" fill="#E2E8F0" fill-opacity="0.3"/>
+    <rect x="30" y="120" width="430" height="12" rx="6" fill="#E2E8F0" fill-opacity="0.25"/>
+    <rect x="30" y="168" width="180" height="140" rx="10" fill="#93C5FD" fill-opacity="0.35"/>
+    <rect x="230" y="168" width="250" height="10" rx="5" fill="#E2E8F0" fill-opacity="0.32"/>
+    <rect x="230" y="190" width="240" height="10" rx="5" fill="#E2E8F0" fill-opacity="0.28"/>
+    <rect x="230" y="212" width="230" height="10" rx="5" fill="#E2E8F0" fill-opacity="0.24"/>
+    <rect x="230" y="252" width="220" height="10" rx="5" fill="#E2E8F0" fill-opacity="0.22"/>
+  </g>
+
+  <g transform="translate(470 350) rotate(-6)">
+    <rect x="0" y="0" width="430" height="270" rx="16" fill="url(#panel)" stroke="#E2E8F0" stroke-opacity="0.2"/>
+    <rect x="24" y="28" width="170" height="14" rx="7" fill="#E2E8F0" fill-opacity="0.45"/>
+    <rect x="24" y="58" width="380" height="10" rx="5" fill="#E2E8F0" fill-opacity="0.3"/>
+    <rect x="24" y="78" width="360" height="10" rx="5" fill="#E2E8F0" fill-opacity="0.26"/>
+    <rect x="24" y="98" width="340" height="10" rx="5" fill="#E2E8F0" fill-opacity="0.22"/>
+  </g>
+
+  <!-- Ticker line -->
+  <g opacity="0.5">
+    <rect x="0" y="860" width="1920" height="72" fill="#0B1220"/>
+    <rect x="90" y="888" width="240" height="14" rx="7" fill="#38BDF8"/>
+    <rect x="360" y="888" width="180" height="14" rx="7" fill="#E2E8F0" fill-opacity="0.45"/>
+    <rect x="570" y="888" width="280" height="14" rx="7" fill="#E2E8F0" fill-opacity="0.35"/>
+    <rect x="880" y="888" width="220" height="14" rx="7" fill="#38BDF8" fill-opacity="0.8"/>
+    <rect x="1130" y="888" width="170" height="14" rx="7" fill="#E2E8F0" fill-opacity="0.45"/>
+    <rect x="1330" y="888" width="250" height="14" rx="7" fill="#E2E8F0" fill-opacity="0.35"/>
+  </g>
+</svg>

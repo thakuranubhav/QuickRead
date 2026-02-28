@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1920" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1D4ED8"/>
+      <stop offset="0.5" stop-color="#0F766E"/>
+      <stop offset="1" stop-color="#0C4A6E"/>
+    </linearGradient>
+    <radialGradient id="haze" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(960 460) rotate(90) scale(520 980)">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="city" x1="960" y1="590" x2="960" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0F172A" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#020617"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <rect width="1920" height="1080" fill="url(#haze)"/>
+
+  <g opacity="0.28" fill="#E0F2FE">
+    <circle cx="260" cy="190" r="72"/>
+    <circle cx="330" cy="210" r="50"/>
+    <circle cx="1340" cy="180" r="78"/>
+    <circle cx="1430" cy="210" r="54"/>
+    <circle cx="1500" cy="185" r="44"/>
+  </g>
+
+  <g opacity="0.35" stroke="#BAE6FD" stroke-width="2">
+    <path d="M120 720 C 300 670, 460 780, 640 730"/>
+    <path d="M730 760 C 920 700, 1110 820, 1320 750"/>
+    <path d="M1210 660 C 1420 600, 1570 740, 1790 670"/>
+  </g>
+
+  <g fill="url(#city)">
+    <rect x="0" y="770" width="110" height="310"/>
+    <rect x="85" y="710" width="120" height="370"/>
+    <rect x="175" y="760" width="140" height="320"/>
+    <rect x="305" y="680" width="120" height="400"/>
+    <rect x="410" y="740" width="140" height="340"/>
+    <rect x="545" y="640" width="150" height="440"/>
+    <rect x="690" y="730" width="120" height="350"/>
+    <rect x="790" y="610" width="130" height="470"/>
+    <rect x="910" y="690" width="140" height="390"/>
+    <rect x="1035" y="650" width="150" height="430"/>
+    <rect x="1170" y="745" width="110" height="335"/>
+    <rect x="1270" y="620" width="160" height="460"/>
+    <rect x="1420" y="700" width="130" height="380"/>
+    <rect x="1535" y="660" width="140" height="420"/>
+    <rect x="1660" y="740" width="120" height="340"/>
+    <rect x="1770" y="690" width="150" height="390"/>
+  </g>
+</svg>
