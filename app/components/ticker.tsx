@@ -22,7 +22,7 @@ export default function Ticker({ headlines }: TickerProps) {
         .ticker {
           display: inline-block;
           padding-left: 100%;
-          animation: tickerScroll 30s linear infinite;
+          animation: tickerScroll 60s linear infinite;
         }
 
         @keyframes tickerScroll {
