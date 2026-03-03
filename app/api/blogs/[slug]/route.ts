@@ -1,33 +1,68 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { Blog } from "@/lib/models/Blog";
 import { verifyAuthToken } from "@/lib/auth";
 import { unlink } from "node:fs/promises";
 import path from "node:path";
+import type { FlattenMaps, Types } from "mongoose";
 
 export const runtime = "nodejs";
 
-type RouteProps = {
-  params: Promise<{
-    slug: string;
-  }>;
-};
+/* ===============================
+   BLOG TYPE
+================================ */
+interface BlogType {
+  _id: Types.ObjectId;
+  title: string;
+  slug: string;
+  content: string;
+  authorName: string;
+  authorId?: string;
+  category: string;
+  imageUrl?: string;
+  imageFilename?: string;
+  imageMimeType?: string;
+  imageSizeBytes?: number;
+  tags: string[];
+  publishDate: Date;
+}
 
-export async function GET(_request: Request, { params }: RouteProps) {
+/* ===============================
+   GET BLOG BY SLUG
+================================ */
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ slug: string }> }
+) {
   try {
-    const { slug } = await params;
+    const { slug } = await context.params;
     await connectToDatabase();
-    const post = await Blog.findOne({ slug }).lean();
+
+    const post = await Blog.findOne({ slug }).lean<
+      FlattenMaps<BlogType> | null
+    >();
 
     if (!post) {
       return NextResponse.json({ error: "Blog not found." }, { status: 404 });
     }
 
-    return NextResponse.json({ post });
+    const paragraphs = post.content
+      .split(/\n\s*\n/)
+      .map((p) => p.trim())
+      .filter(Boolean);
+
+    return NextResponse.json({ post, paragraphs });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch blog." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch blog." },
+      { status: 500 }
+    );
   }
 }
+
+/* ===============================
+   HELPERS
+================================ */
 
 const slugify = (value: string) =>
   value
@@ -37,8 +72,8 @@ const slugify = (value: string) =>
     .replace(/(^-|-$)+/g, "");
 
 function readCookie(headerValue: string, cookieName: string) {
-  const pairs = headerValue.split(";").map((part) => part.trim());
-  const cookie = pairs.find((part) => part.startsWith(`${cookieName}=`));
+  const pairs = headerValue.split(";").map((p) => p.trim());
+  const cookie = pairs.find((p) => p.startsWith(`${cookieName}=`));
   if (!cookie) return undefined;
   return decodeURIComponent(cookie.slice(cookieName.length + 1));
 }
@@ -46,19 +81,36 @@ function readCookie(headerValue: string, cookieName: string) {
 async function ensureUniqueSlug(baseSlug: string, currentId: string) {
   let slug = baseSlug;
   let counter = 1;
-  while (await Blog.exists({ slug, _id: { $ne: currentId } })) {
+
+  while (
+    await Blog.exists({
+      slug,
+      _id: { $ne: currentId },
+    })
+  ) {
     counter += 1;
     slug = `${baseSlug}-${counter}`;
   }
+
   return slug;
 }
 
-async function getAuthPayload(request: Request) {
+async function getAuthPayload(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
-  const cookieToken = readCookie(request.headers.get("cookie") ?? "", "auth_token");
-  const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : undefined;
+
+  const cookieToken = readCookie(
+    request.headers.get("cookie") ?? "",
+    "auth_token"
+  );
+
+  const bearerToken = authHeader?.startsWith("Bearer ")
+    ? authHeader.slice(7)
+    : undefined;
+
   const token = bearerToken ?? cookieToken;
+
   if (!token) return null;
+
   try {
     return await verifyAuthToken(token);
   } catch {
@@ -66,27 +118,48 @@ async function getAuthPayload(request: Request) {
   }
 }
 
-export async function PUT(request: Request, { params }: RouteProps) {
+/* ===============================
+   UPDATE BLOG
+================================ */
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ slug: string }> }
+) {
   try {
-    const { slug } = await params;
+    const { slug } = await context.params;
+
     await connectToDatabase();
+
     const payload = await getAuthPayload(request);
+
     if (!payload) {
-      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+      return NextResponse.json(
+        { error: "Authentication required." },
+        { status: 401 }
+      );
     }
 
     const post = await Blog.findOne({ slug });
+
     if (!post) {
-      return NextResponse.json({ error: "Blog not found." }, { status: 404 });
+      return NextResponse.json(
+        { error: "Blog not found." },
+        { status: 404 }
+      );
     }
 
     const isAdmin = payload.role === "admin";
     const isAuthor = post.authorId && String(post.authorId) === payload.sub;
+
     if (!isAdmin && !isAuthor) {
-      return NextResponse.json({ error: "You do not have permission to edit this blog." }, { status: 403 });
+      return NextResponse.json(
+        { error: "Permission denied." },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();
+
     const title = String(body?.title ?? "").trim();
     const category = String(body?.category ?? "").trim();
     const content = String(body?.content ?? "").trim();
@@ -95,7 +168,9 @@ export async function PUT(request: Request, { params }: RouteProps) {
 
     if (!title || !category || !content || !publishDate) {
       return NextResponse.json(
-        { error: "Title, category, content, and publish date are required." },
+        {
+          error: "Title, category, content and publish date are required.",
+        },
         { status: 400 }
       );
     }
@@ -116,42 +191,76 @@ export async function PUT(request: Request, { params }: RouteProps) {
           .filter(Boolean);
 
     await post.save();
+
     return NextResponse.json({ post });
-  } catch {
-    return NextResponse.json({ error: "Failed to update blog." }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to update blog." },
+      { status: 500 }
+    );
   }
 }
 
-export async function DELETE(request: Request, { params }: RouteProps) {
+/* ===============================
+   DELETE BLOG
+================================ */
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ slug: string }> }
+) {
   try {
-    const { slug } = await params;
+    const { slug } = await context.params;
+
     await connectToDatabase();
+
     const payload = await getAuthPayload(request);
+
     if (!payload) {
-      return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+      return NextResponse.json(
+        { error: "Authentication required." },
+        { status: 401 }
+      );
     }
 
     const post = await Blog.findOne({ slug });
+
     if (!post) {
-      return NextResponse.json({ error: "Blog not found." }, { status: 404 });
+      return NextResponse.json(
+        { error: "Blog not found." },
+        { status: 404 }
+      );
     }
 
     const isAdmin = payload.role === "admin";
     const isAuthor = post.authorId && String(post.authorId) === payload.sub;
+
     if (!isAdmin && !isAuthor) {
-      return NextResponse.json({ error: "You do not have permission to delete this blog." }, { status: 403 });
+      return NextResponse.json(
+        { error: "Permission denied." },
+        { status: 403 }
+      );
     }
 
     const imageFilename = post.imageFilename;
+
     await post.deleteOne();
 
     if (imageFilename) {
-      const filePath = path.join(process.cwd(), "public", "uploads", imageFilename);
+      const filePath = path.join(
+        process.cwd(),
+        "public",
+        "uploads",
+        imageFilename
+      );
+
       await unlink(filePath).catch(() => undefined);
     }
 
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json({ error: "Failed to delete blog." }, { status: 500 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to delete blog." },
+      { status: 500 }
+    );
   }
 }

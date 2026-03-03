@@ -16,7 +16,13 @@ export async function GET() {
   try {
     const payload = await verifyAuthToken(token);
     await connectToDatabase();
-    const user = await User.findById(payload.sub).lean();
+    const user = (await User.findById(payload.sub).lean()) as
+      | {
+          role?: "user" | "admin";
+          name?: string;
+          email?: string;
+        }
+      | null;
     return NextResponse.json({
       authenticated: true,
       role: user?.role ?? "user",

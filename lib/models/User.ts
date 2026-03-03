@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, model, models, type Model } from "mongoose";
 
 export type UserDocument = {
   name: string;
@@ -19,4 +19,6 @@ const UserSchema = new Schema<UserDocument>(
   { timestamps: true }
 );
 
-export const User = models.User || model<UserDocument>("User", UserSchema);
+export const User: Model<UserDocument> =
+  (models.User as Model<UserDocument>) ||
+  model<UserDocument>("User", UserSchema);

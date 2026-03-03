@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { connectToDatabase } from "@/lib/mongodb";
-import { Blog } from "@/lib/models/Blog";
+import { Blog, type BlogDocument } from "@/lib/models/Blog";
 import SiteNavbar from "@/app/components/site-navbar";
 import { verifyAuthToken } from "@/lib/auth";
 import BlogActions from "./blog-actions";
@@ -18,7 +18,7 @@ type PageProps = {
 export default async function BlogDetailPage({ params }: PageProps) {
   const { slug } = await params;
   await connectToDatabase();
-  const post = await Blog.findOne({ slug }).lean();
+  const post = await Blog.findOne({ slug }).lean<BlogDocument | null>();
 
   if (!post) {
     notFound();

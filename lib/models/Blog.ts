@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import { Schema, model, models, type Model } from "mongoose";
 
 export type BlogDocument = {
   title: string;
@@ -35,4 +35,6 @@ const BlogSchema = new Schema<BlogDocument>(
   { timestamps: true }
 );
 
-export const Blog = models.Blog || model<BlogDocument>("Blog", BlogSchema);
+export const Blog: Model<BlogDocument> =
+  (models.Blog as Model<BlogDocument>) ||
+  model<BlogDocument>("Blog", BlogSchema);
